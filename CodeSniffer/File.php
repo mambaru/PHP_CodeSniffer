@@ -1415,17 +1415,6 @@ class PHP_CodeSniffer_File
      */
     public static function tokenizeString($string, $tokenizer, $eolChar='\n', $tabWidth=null, $encoding=null)
     {
-        // Minified files often have a very large number of characters per line
-        // and cause issues when tokenizing.
-        if (get_class($tokenizer) !== 'PHP_CodeSniffer_Tokenizers_PHP') {
-            $numChars = strlen($string);
-            $numLines = (substr_count($string, $eolChar) + 1);
-            $average  = ($numChars / $numLines);
-            if ($average > 100) {
-                throw new PHP_CodeSniffer_Exception('File appears to be minified and cannot be processed');
-            }
-        }
-
         $tokens = $tokenizer->tokenizeString($string, $eolChar);
 
         if ($tabWidth === null) {
