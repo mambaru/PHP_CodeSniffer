@@ -758,16 +758,6 @@ class PHP_CodeSniffer_CLI
      */
     public function processUnknownArgument($arg, $pos)
     {
-        // Check if anything was passed via STDIN. If so,
-        // ignore all passed files.
-        $read   = array(STDIN);
-        $write  = array();
-        $except = array();
-        $result = stream_select($read, $write, $except, 0);
-        if ($result === 1) {
-            return;
-        }
-
         // We don't know about any additional switches; just files.
         if ($arg{0} === '-') {
             if ($this->dieOnUnknownArg === false) {
@@ -781,6 +771,15 @@ class PHP_CodeSniffer_CLI
 
         $file = PHP_CodeSniffer::realpath($arg);
         if (file_exists($file) === false) {
+            // Check if anything was passed via STDIN.
+            $read   = array(STDIN);
+            $write  = array();
+            $except = array();
+            $result = stream_select($read, $write, $except, 0);
+            if ($result === 1) {
+                return;
+            }
+
             if ($this->dieOnUnknownArg === false) {
                 return;
             }
